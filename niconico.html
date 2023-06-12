@@ -6,21 +6,12 @@
     function searchGoogle() {
       var query = document.getElementById('search-input').value;
       var url = 'https://www.google.com/search?q=' + encodeURIComponent(query);
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var searchResults = document.getElementById('search-results');
-          searchResults.innerHTML = xhr.responseText;
-        }
-      };
-      xhr.send();
+      window.open(url, '_self');
     }
   </script>
 </head>
 <body>
   <input type="text" id="search-input" placeholder="検索キーワードを入力してください">
   <button type="button" onclick="searchGoogle()">検索</button>
-  <div id="search-results"></div>
 </body>
 </html>
