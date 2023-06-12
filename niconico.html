@@ -14,11 +14,22 @@
       var videoUrl = document.getElementById('video-url').value;
       var videoPlayer = document.getElementById('video-player');
       
-      // ニコニコ動画の埋め込みコード
-      var embedCode = '<iframe width="640" height="360" src="' + videoUrl + '" frameborder="0" allowfullscreen></iframe>';
+      // ビデオプレーヤーの埋め込みコード
+      var embedCode = '<script type="application/javascript" src="' + videoUrl + '/script?w=640&h=360"></script><noscript><a href="' + videoUrl + '">' + videoPlayerTitle(videoUrl) + '</a></noscript>';
       
       // ビデオプレーヤーの内容を更新してビデオを再生
       videoPlayer.innerHTML = embedCode;
+    }
+    
+    function videoPlayerTitle(videoUrl) {
+      // ニコニコ動画のタイトルを抽出する関数
+      var regex = /watch\/([a-zA-Z0-9]+)/;
+      var match = videoUrl.match(regex);
+      if (match && match.length > 1) {
+        var videoId = match[1];
+        return 'ニコニコ動画 - ' + videoId;
+      }
+      return 'ニコニコ動画';
     }
   </script>
 </body>
