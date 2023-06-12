@@ -5,8 +5,16 @@
   <script>
     function displayVideo() {
       var url = document.getElementById('video-url').value;
-      var iframe = document.getElementById('video-iframe');
+      var iframe = document.createElement('iframe');
+      iframe.width = "640";
+      iframe.height = "360";
       iframe.src = url;
+      iframe.frameborder = "0";
+      iframe.allowfullscreen = true;
+
+      var container = document.getElementById('video-container');
+      container.innerHTML = '';
+      container.appendChild(iframe);
     }
   </script>
 </head>
@@ -14,6 +22,6 @@
   <input type="text" id="video-url" placeholder="動画のURLを入力してください">
   <button type="button" onclick="displayVideo()">表示</button>
   <br>
-  <iframe id="video-iframe" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+  <div id="video-container"></div>
 </body>
 </html>
