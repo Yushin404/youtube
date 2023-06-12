@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>動画表示</title>
+  <title>ビデオ再生</title>
+  <style>
+    #video-player {
+      width: 640px;
+      height: 360px;
+    }
+  </style>
   <script>
-    function displayVideo() {
-      var url = document.getElementById('video-url').value;
-      var iframe = document.createElement('iframe');
-      iframe.width = "640";
-      iframe.height = "360";
-      iframe.src = url;
-      iframe.frameborder = "0";
-      iframe.allowfullscreen = true;
-
-      var container = document.getElementById('video-container');
-      container.innerHTML = '';
-      container.appendChild(iframe);
+    function playVideo() {
+      var videoUrl = document.getElementById('video-url').value;
+      var videoPlayer = document.getElementById('video-player');
+      
+      // ビデオを再生するための埋め込みコードを作成
+      var embedCode = '<video controls autoplay src="' + videoUrl + '"></video>';
+      
+      // ビデオプレーヤーの内容を更新してビデオを再生
+      videoPlayer.innerHTML = embedCode;
     }
   </script>
 </head>
 <body>
-  <input type="text" id="video-url" placeholder="動画のURLを入力してください">
-  <button type="button" onclick="displayVideo()">表示</button>
+  <input type="text" id="video-url" placeholder="ビデオのURLを入力してください">
+  <button type="button" onclick="playVideo()">再生</button>
   <br>
-  <div id="video-container"></div>
+  <div id="video-player"></div>
 </body>
 </html>
