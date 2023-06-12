@@ -1,1 +1,26 @@
-<iframe width="640" height="360" src="https://embed.nicovideo.jp/watch/sm39875801?persistence=1&oldScript=1&referer=https%3A%2F%2Fyushin404.github.io%2F&from=0&allowProgrammaticFullScreen=1" frameborder="0" allowfullscreen></iframe>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Googleアクセス</title>
+  <script>
+    function searchGoogle() {
+      var query = document.getElementById('search-input').value;
+      var url = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var searchResults = document.getElementById('search-results');
+          searchResults.innerHTML = xhr.responseText;
+        }
+      };
+      xhr.send();
+    }
+  </script>
+</head>
+<body>
+  <input type="text" id="search-input" placeholder="検索キーワードを入力してください">
+  <button type="button" onclick="searchGoogle()">検索</button>
+  <div id="search-results"></div>
+</body>
+</html>
