@@ -1,7 +1,19 @@
-<iframe
-  width="320"
-  height="180"
-  src="https://embed.nicovideo.jp/watch/sm39875801?persistence=1&oldScript=1&referer=https%3A%2F%2Fyushin404.github.io%2F&from=0&allowProgrammaticFullScreen=1"
-  frameborder="0"
-  allowfullscreen
-></iframe>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>動画表示</title>
+  <script>
+    function displayVideo() {
+      var url = document.getElementById('video-url').value;
+      var iframe = document.getElementById('video-iframe');
+      iframe.src = url;
+    }
+  </script>
+</head>
+<body>
+  <input type="text" id="video-url" placeholder="動画のURLを入力してください">
+  <button type="button" onclick="displayVideo()">表示</button>
+  <br>
+  <iframe id="video-iframe" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+</body>
+</html>
