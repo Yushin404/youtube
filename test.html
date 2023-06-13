@@ -5,7 +5,38 @@
 </head>
 <body>
   <div>
-    <script type="application/javascript" src="https://embed.nicovideo.jp/watch/sm39776265/script?w=640&h=360"></script>
+    <script type="application/javascript" src="https://embed.nicovideo.jp/watch/{VIDEO_ID}/script?w=640&h=360"></script>
   </div>
+
+  <label for="videoUrl">動画URL:</label>
+  <input type="text" id="videoUrl" name="videoUrl">
+
+  <button onclick="embedVideo()">動画埋め込み</button>
+
+  <script>
+    function embedVideo() {
+      var videoUrl = document.getElementById("videoUrl").value;
+      var videoId = extractVideoId(videoUrl);
+      if (videoId !== null) {
+        var scriptUrl = "https://embed.nicovideo.jp/watch/" + videoId + "/script?w=640&h=360";
+        var scriptElement = document.createElement("script");
+        scriptElement.src = scriptUrl;
+        scriptElement.type = "application/javascript";
+        document.querySelector("div").appendChild(scriptElement);
+      } else {
+        alert("無効な動画URLです。正しいURLを入力してください。");
+      }
+    }
+
+    function extractVideoId(url) {
+      var videoIdRegex = /watch\/(sm\d+)/;
+      var match = url.match(videoIdRegex);
+      if (match && match[1]) {
+        return match[1];
+      } else {
+        return null;
+      }
+    }
+  </script>
 </body>
 </html>
