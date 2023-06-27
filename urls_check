@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ファイル一覧表示</title>
+</head>
+<body>
+  <label for="url-input">URL:</label>
+  <input type="text" id="url-input">
+  <button onclick="scrapeFiles()">ファイル一覧表示</button>
+  
+  <ul id="file-list"></ul>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function scrapeFiles() {
+      var url = document.getElementById("url-input").value;
+      $.get(url, function(response) {
+        var files = $(response).find("ul.file-list li");
+        var fileList = document.getElementById("file-list");
+        fileList.innerHTML = "";
+        files.each(function() {
+          var fileName = $(this).text();
+          var li = document.createElement("li");
+          li.appendChild(document.createTextNode(fileName));
+          fileList.appendChild(li);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
