@@ -50,8 +50,9 @@
       margin-left: 10px;
       flex-grow: 1;
     }
-    .task-item input[type="checkbox"] {
-      margin-right: 10px;
+    .completed-task-item {
+      text-decoration: line-through;
+      color: #888;
     }
   </style>
 </head>
@@ -64,6 +65,9 @@
   </div>
 
   <div id="todo-list"></div>
+
+  <h2>実行済みタスク</h2>
+  <div id="completed-tasks"></div>
 
   <script>
     function addTask() {
@@ -84,6 +88,9 @@
       newTaskCheckbox.onclick = function() {
         if (this.checked) {
           todoList.removeChild(newTaskItem);
+          var completedTasks = document.getElementById('completed-tasks');
+          newTaskItem.classList.add('completed-task-item');
+          completedTasks.appendChild(newTaskItem);
         }
       };
 
