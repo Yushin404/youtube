@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>画像収集と表示</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <title>ToDoリスト</title>
+  <style>
+    #todo-list {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-  <label for="urlInput">URL:</label>
-  <input type="text" id="urlInput">
-  <button onclick="collectImages()">画像収集</button>
+  <h1>ToDoリスト</h1>
 
-  <div id="imageContainer"></div>
+  <input type="text" id="taskInput" placeholder="タスクを入力してください">
+  <button onclick="addTask()">追加</button>
+
+  <div id="todo-list"></div>
 
   <script>
-    function collectImages() {
-      var url = document.getElementById('urlInput').value;
+    function addTask() {
+      var taskInput = document.getElementById('taskInput');
+      var task = taskInput.value;
       
-      $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'html',
-        success: function(data) {
-          var images = $(data).find('img');
-          var imageContainer = document.getElementById('imageContainer');
-          imageContainer.innerHTML = '';
-          
-          for (var i = 0; i < images.length; i++) {
-            var image = document.createElement('img');
-            image.src = images[i].src;
-            imageContainer.appendChild(image);
-          }
-        },
-        error: function() {
-          alert('画像の収集中にエラーが発生しました。');
-        }
-      });
+      if (task === '') {
+        alert('タスクを入力してください');
+        return;
+      }
+      
+      var todoList = document.getElementById('todo-list');
+      var newTask = document.createElement('p');
+      newTask.innerHTML = task;
+      
+      todoList.appendChild(newTask);
+      
+      taskInput.value = '';
     }
   </script>
 </body>
