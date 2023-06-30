@@ -2,20 +2,66 @@
 <html>
 <head>
   <title>ToDoリスト</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    #taskInput {
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f8f8f8;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .input-container {
+      display: flex;
+      justify-content: center;
       margin-bottom: 10px;
     }
+    #taskInput {
+      padding: 8px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      margin-right: 8px;
+      flex-grow: 1;
+    }
+    #addButton {
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+    #todo-list {
+      margin-top: 20px;
+    }
     .task-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      background-color: #fff;
+      border-radius: 4px;
       margin-bottom: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .task-item label {
+      margin-left: 10px;
+      flex-grow: 1;
+    }
+    .task-item input[type="checkbox"] {
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
   <h1>ToDoリスト</h1>
 
-  <input type="text" id="taskInput" placeholder="タスクを入力してください">
-  <button onclick="addTask()">追加</button>
+  <div class="input-container">
+    <input type="text" id="taskInput" placeholder="タスクを入力してください">
+    <button id="addButton" onclick="addTask()">追加</button>
+  </div>
 
   <div id="todo-list"></div>
 
@@ -23,16 +69,16 @@
     function addTask() {
       var taskInput = document.getElementById('taskInput');
       var task = taskInput.value;
-      
+
       if (task === '') {
         alert('タスクを入力してください');
         return;
       }
-      
+
       var todoList = document.getElementById('todo-list');
       var newTaskItem = document.createElement('div');
       newTaskItem.className = 'task-item';
-      
+
       var newTaskCheckbox = document.createElement('input');
       newTaskCheckbox.type = 'checkbox';
       newTaskCheckbox.onclick = function() {
@@ -40,14 +86,14 @@
           todoList.removeChild(newTaskItem);
         }
       };
-      
+
       var newTaskLabel = document.createElement('label');
       newTaskLabel.innerText = task;
-      
+
       newTaskItem.appendChild(newTaskCheckbox);
       newTaskItem.appendChild(newTaskLabel);
       todoList.appendChild(newTaskItem);
-      
+
       taskInput.value = '';
     }
   </script>
