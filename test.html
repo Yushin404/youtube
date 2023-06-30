@@ -1,39 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>画像のURLを表示する</title>
-  <script>
-    function getImageUrls() {
-      var xhr = new XMLHttpRequest();
-      var url = "https://www.env.go.jp/";
-
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var responseHtml = xhr.responseText;
-
-          var tempElement = document.createElement('div');
-          tempElement.innerHTML = responseHtml;
-
-          var imageElements = tempElement.getElementsByTagName('img');
-          var imageUrls = [];
-
-          for (var i = 0; i < imageElements.length; i++) {
-            var imageUrl = imageElements[i].src;
-            imageUrls.push(imageUrl);
-          }
-
-          var outputElement = document.getElementById('output');
-          outputElement.innerText = imageUrls.join('\n');
-        }
-      };
-
-      xhr.open('GET', url, true);
-      xhr.send();
-    }
-  </script>
+  <title>画像収集と表示</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-  <button onclick="getImageUrls()">画像のURLを取得</button>
-  <pre id="output"></pre>
+  <label for="urlInput">URL:</label>
+  <input type="text" id="urlInput">
+  <button onclick="collectImages()">画像収集</button>
+
+  <div id="imageContainer"></div>
+
+  <script>
+    function collectImages() {
+      var url = document.getElementById('urlInput').value;
+      
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+          var images = $(data).find('img');
+          var imageContainer = document.getElementById('imageContainer');
+          imageContainer.innerHTML = '';
+          
+          for (var i = 0; i < images.length; i++) {
+            var image = document.createElement('img');
+            image.src = images[i].src;
+            imageContainer.appendChild(image);
+          }
+        },
+        error: function() {
+          alert('画像の収集中にエラーが発生しました。');
+        }
+      });
+    }
+  </script>
 </body>
 </html>
