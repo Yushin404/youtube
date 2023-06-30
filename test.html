@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>画像URLの抽出</title>
+  <title>画像のURLを表示する</title>
   <script>
-    function extractImageURL() {
-      var text = document.getElementById("url").value;
-      var regex = /(https?:\/\/[^\s]+)/g;
-      var matches = text.match(regex);
-      
-      var resultContainer = document.getElementById("result");
-      resultContainer.innerHTML = "";
-      
-      if (matches) {
-        for (var i = 0; i < matches.length; i++) {
-          var imageURL = matches[i];
-          var imageElement = document.createElement("img");
-          imageElement.src = imageURL;
-          resultContainer.appendChild(imageElement);
+    function getImageUrls() {
+      var xhr = new XMLHttpRequest();
+      var url = "https://www.env.go.jp/";
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var responseHtml = xhr.responseText;
+
+          var tempElement = document.createElement('div');
+          tempElement.innerHTML = responseHtml;
+
+          var imageElements = tempElement.getElementsByTagName('img');
+          var imageUrls = [];
+
+          for (var i = 0; i < imageElements.length; i++) {
+            var imageUrl = imageElements[i].src;
+            imageUrls.push(imageUrl);
+          }
+
+          var outputElement = document.getElementById('output');
+          outputElement.innerText = imageUrls.join('\n');
         }
-      } else {
-        resultContainer.innerHTML = "画像URLが見つかりませんでした。";
-      }
+      };
+
+      xhr.open('GET', url, true);
+      xhr.send();
     }
   </script>
 </head>
 <body>
-  <h1>画像URLの抽出</h1>
-  <input type="text" id="url" placeholder="URLを入力してください">
-  <button onclick="extractImageURL()">抽出</button>
-  <div id="result"></div>
+  <button onclick="getImageUrls()">画像のURLを取得</button>
+  <pre id="output"></pre>
 </body>
 </html>
