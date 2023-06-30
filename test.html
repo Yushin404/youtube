@@ -50,6 +50,24 @@
       margin-left: 10px;
       flex-grow: 1;
     }
+    .task-item button {
+      margin-left: 10px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #888;
+      color: #fff;
+      cursor: pointer;
+    }
+    .completed-task-list {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
+    }
+    .completed-task-list h2 {
+      margin-bottom: 10px;
+    }
     .completed-task-item {
       text-decoration: line-through;
       color: #888;
@@ -60,14 +78,16 @@
   <h1>ToDoリスト</h1>
 
   <div class="input-container">
-    <input type="text" id="taskInput" placeholder="タスクを入力してください">
+    <input type="text" id="taskInput" placeholder="タスクを入力してください" onkeydown="handleKeyDown(event)">
     <button id="addButton" onclick="addTask()">追加</button>
   </div>
 
   <div id="todo-list"></div>
 
-  <h2>実行済みタスク</h2>
-  <div id="completed-tasks"></div>
+  <div class="completed-task-list">
+    <h2 id="dateHeading"></h2>
+    <div id="completed-tasks"></div>
+  </div>
 
   <script>
     function addTask() {
@@ -97,12 +117,34 @@
       var newTaskLabel = document.createElement('label');
       newTaskLabel.innerText = task;
 
+      var deleteButton = document.createElement('button');
+      deleteButton.innerText = '削除';
+      deleteButton.onclick = function() {
+        todoList.removeChild(newTaskItem);
+      };
+
       newTaskItem.appendChild(newTaskCheckbox);
       newTaskItem.appendChild(newTaskLabel);
+      newTaskItem.appendChild(deleteButton);
       todoList.appendChild(newTaskItem);
 
       taskInput.value = '';
     }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Enter') {
+        addTask();
+      }
+    }
+
+    function updateDateHeading() {
+      var dateHeading = document.getElementById('dateHeading');
+      var currentDate = new Date();
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      dateHeading.textContent = currentDate.toLocaleDateString('ja-JP', options);
+    }
+
+    updateDateHeading();
   </script>
 </body>
 </html>
