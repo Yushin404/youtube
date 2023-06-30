@@ -3,8 +3,11 @@
 <head>
   <title>ToDoリスト</title>
   <style>
-    #todo-list {
+    #taskInput {
       margin-bottom: 10px;
+    }
+    .task-item {
+      margin-bottom: 5px;
     }
   </style>
 </head>
@@ -27,10 +30,23 @@
       }
       
       var todoList = document.getElementById('todo-list');
-      var newTask = document.createElement('p');
-      newTask.innerHTML = task;
+      var newTaskItem = document.createElement('div');
+      newTaskItem.className = 'task-item';
       
-      todoList.appendChild(newTask);
+      var newTaskCheckbox = document.createElement('input');
+      newTaskCheckbox.type = 'checkbox';
+      newTaskCheckbox.onclick = function() {
+        if (this.checked) {
+          todoList.removeChild(newTaskItem);
+        }
+      };
+      
+      var newTaskLabel = document.createElement('label');
+      newTaskLabel.innerText = task;
+      
+      newTaskItem.appendChild(newTaskCheckbox);
+      newTaskItem.appendChild(newTaskLabel);
+      todoList.appendChild(newTaskItem);
       
       taskInput.value = '';
     }
