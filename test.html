@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>動画の埋め込み</title>
+  <title>画像抽出</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // 画像の抽出処理
+      function extractImages(url) {
+        $.ajax({
+          url: "https://api.allorigins.win/get?url=" + encodeURIComponent(url),
+          dataType: "json",
+          success: function(data) {
+            var htmlContent = data.contents;
+            var images = $(htmlContent).find("img");
+            
+            // 画像の表示
+            images.each(function() {
+              var imageUrl = $(this).attr("src");
+              $("#imagesContainer").append("<img src='" + imageUrl + "'>");
+            });
+          },
+          error: function() {
+            alert("画像の抽出中にエラーが発生しました。");
+          }
+        });
+      }
+      
+      // URLの入力と画像抽出のトリガー
+      $("#extractButton").click(function() {
+        var url = $("#urlInput").val();
+        $("#imagesContainer").empty();
+        extractImages(url);
+      });
+    });
+  </script>
 </head>
 <body>
-  <div>
-    <script type="application/javascript" src="https://embed.nicovideo.jp/watch/{VIDEO_ID}/script?w=640&h=360"></script>
-  </div>
-
-  <label for="videoUrl">動画URL:</label>
-  <input type="text" id="videoUrl" name="videoUrl">
-
-  <button onclick="embedVideo()">動画埋め込み</button>
-
-  <script>
-    function embedVideo() {
-      var videoUrl = document.getElementById("videoUrl").value;
-      var videoId = extractVideoId(videoUrl);
-      if (videoId !== null) {
-        var scriptUrl = "https://embed.nicovideo.jp/watch/" + videoId + "/script?w=640&h=360";
-        var scriptElement = document.createElement("script");
-        scriptElement.src = scriptUrl;
-        scriptElement.type = "application/javascript";
-        document.querySelector("div").appendChild(scriptElement);
-      } else {
-        alert("無効な動画URLです。正しいURLを入力してください。");
-      }
-    }
-
-    function extractVideoId(url) {
-      var videoIdRegex = /watch\/(sm\d+)/;
-      var match = url.match(videoIdRegex);
-      if (match && match[1]) {
-        return match[1];
-      } else {
-        return null;
-      }
-    }
-  </script>
+  <h1>画像抽出</h1>
+  
+  <input id="urlInput" type="text" placeholder="URLを入力してください">
+  <button id="extractButton">抽出</button>
+  
+  <div id="imagesContainer"></div>
 </body>
 </html>
