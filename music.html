@@ -31,10 +31,10 @@
 <body>
   <div id="container"></div>
   <div class="music-player">
-    <iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="175" style="width:100%;max-width:660px;overflow:hidden;border-radius:10px;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/album/aisite-no-shomei-feat-kankan/1514898110?i=1514898119&l=en-US"></iframe>
+    <iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="175" style="width:100%;max-width:660px;overflow:hidden;border-radius:10px;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/album/demon-lord/1695906040?i=1695906382&l=en-US"></iframe>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/build/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
   <script>
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -43,7 +43,7 @@
     document.getElementById('container').appendChild(renderer.domElement);
 
     const sphereGeometry = new THREE.SphereGeometry(0.05, 32, 16);
-    const sphereMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    const sphereMaterial = new THREE.MeshPhongMaterial({ color: 0x990000 });
     const sphereGroup = new THREE.Group();
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -68,10 +68,18 @@
     const mouse = new THREE.Vector2();
     const target = new THREE.Vector2();
     const windowHalf = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
+    const mouseMoveScale = 0.001; // マウス移動のスケールダウンの値
 
     function onMouseMove(event) {
-      mouse.x = (event.clientX - windowHalf.x) * 0.002;
-      mouse.y = (event.clientY - windowHalf.y) * 0.002;
+      mouse.x = (event.clientX - windowHalf.x) * mouseMoveScale;
+      mouse.y = (event.clientY - windowHalf.y) * mouseMoveScale;
+    }
+
+    function onTouchMove(event) {
+      event.preventDefault();
+      const touch = event.changedTouches[0];
+      mouse.x = (touch.clientX - windowHalf.x) * mouseMoveScale;
+      mouse.y = (touch.clientY - windowHalf.y) * mouseMoveScale;
     }
 
     function onWindowResize() {
@@ -82,6 +90,7 @@
     }
 
     window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('resize', onWindowResize);
 
     function animate() {
