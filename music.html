@@ -32,6 +32,12 @@
     .music-player.show {
       opacity: 1;
     }
+
+    @media only screen and (max-width: 600px) {
+      .music-player iframe {
+        height: 100px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -102,7 +108,7 @@
           } else {
             const repulsionDirection = sphere.position.clone().normalize();
             const repulsion = repulsionDirection.multiplyScalar(repulsionForce);
-            sphere.acceleration.add            (repulsion);
+            sphere.acceleration.add(repulsion);
           }
 
           sphere.velocity.add(sphere.acceleration);
@@ -134,7 +140,8 @@
         // 範囲外に出た球をランダムな位置に再配置
         const boundary = 60;
         if (Math.abs(sphere.position.x) > boundary || Math.abs(sphere.position.y) > boundary || Math.abs(sphere.position.z) > boundary) {
-          sphere.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
+          sphere.position.set(Math.random()
+ * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
           sphere.initialPosition.copy(sphere.position);
           sphere.velocity.set(0, 0, 0);
         }
