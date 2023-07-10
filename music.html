@@ -25,12 +25,18 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 1;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    .music-player.show {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
   <div id="container"></div>
-  <div class="music-player">
+  <div class="music-player" id="musicPlayer">
     <iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="175" style="width:100%;max-width:660px;overflow:hidden;border-radius:10px;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/album/demon-lord/1695906040?i=1695906382&l=en-US"></iframe>
   </div>
 
@@ -44,7 +50,7 @@
 
     const sphereGeometry = new THREE.SphereGeometry(0.05, 32, 16);
     const sphereMaterial = new THREE.MeshPhongMaterial({ color: 0x990000 });
-    const sphereGroup = new THREE.Group();
+    let sphereGroup = new THREE.Group();
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -52,15 +58,100 @@
 
     scene.add(sphereGroup, ambientLight, directionalLight);
 
-    for (let i = 0; i < 10000; i++) {
-      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      const x = Math.random() * 40 - 20; // X coordinate
-      const y = Math.random() * 40 - 20; // Y coordinate
-      const z = Math.random() * 40 - 20; // Z coordinate
-      sphere.position.set(x, y, z);
-      sphere.velocity = new THREE.Vector3(Math.random() * 0.01 - 0.005, Math.random() * 0.01 - 0.005, Math.random() * 0.01 - 0.005);
-      sphere.acceleration = new THREE.Vector3(0, 0, 0);
-      sphereGroup.add(sphere);
+    function createSpheres() {
+      for (let i = 0; i < 10000; i++) {
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        const x = Math.random() * 40 - 20; // X coordinate
+        const y = Math.random() * 40 - 20; // Y coordinate
+        const z = Math.random() * 40 - 20; // Z coordinate
+        sphere.position.set(x, y, z);
+        sphere.initialPosition = sphere.position.clone();
+        sphere.velocity = new THREE.Vector3(0, 0, 0);
+        sphere.acceleration = new THREE.Vector3(0, 0, 0);
+        sphereGroup.add(sphere);
+      }
+    }
+
+    function removeSpheres() {
+      sphereGroup.children.forEach(sphere => {
+        sphereGroup.remove(sphere);
+        scene.remove(sphere);
+      });
+    }
+
+    let elapsedTime = 0;
+    const maxElapsedTime = 2; // 最初の2秒間だけ現在の速さで球が弾ける
+    const slowdownFactor = 10; // 10倍遅くする
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      sphereGroup.children.forEach(sphere => {
+        const distance = sphere.position.distanceTo(new THREE.Vector3(0, 0, 0));
+
+        const maxDistance = 10;
+        const attractionForce = 0.0002; // 引力の力を50倍速くする
+        const repulsionForce = 0.0004; // 斥力の力を50倍速くする
+
+        // 最初の2秒間は現在の速さで球が弾ける
+        if (elapsedTime < maxElapsedTime) {
+          if (distance < maxDistance) {
+            const attractionDirection = sphere.position.clone().negate().normalize();
+            const attraction = attractionDirection.multiplyScalar(attractionForce);
+            sphere.acceleration.add(attraction);
+          } else {
+            const repulsionDirection = sphere.position.clone().normalize();
+            const repulsion = repulsionDirection.multiplyScalar(repulsionForce);
+            sphere.acceleration.add            (repulsion);
+          }
+
+          sphere.velocity.add(sphere.acceleration);
+          sphere.position.add(sphere.velocity);
+          sphere.acceleration.multiplyScalar(0.99);
+        } else {
+          // 最初の2秒後は球の動きを10倍遅くする
+          if (distance < maxDistance) {
+            const attractionDirection = sphere.position.clone().negate().normalize();
+            const attraction = attractionDirection.multiplyScalar(attractionForce / slowdownFactor);
+            sphere.acceleration.add(attraction);
+          } else {
+            const repulsionDirection = sphere.position.clone().normalize();
+            const repulsion = repulsionDirection.multiplyScalar(repulsionForce / slowdownFactor);
+            sphere.acceleration.add(repulsion);
+          }
+
+          sphere.velocity.add(sphere.acceleration);
+          sphere.velocity.multiplyScalar(1 / slowdownFactor);
+          sphere.position.add(sphere.velocity);
+          sphere.acceleration.multiplyScalar(0.99);
+        }
+
+        if (sphere.initialPosition.distanceTo(new THREE.Vector3(0, 0, 0)) > 50) {
+          sphere.position.copy(sphere.initialPosition);
+          sphere.velocity.set(0, 0, 0);
+        }
+
+        // 範囲外に出た球をランダムな位置に再配置
+        const boundary = 60;
+        if (Math.abs(sphere.position.x) > boundary || Math.abs(sphere.position.y) > boundary || Math.abs(sphere.position.z) > boundary) {
+          sphere.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
+          sphere.initialPosition.copy(sphere.position);
+          sphere.velocity.set(0, 0, 0);
+        }
+      });
+
+      camera.position.x += (mouse.x - camera.position.x) * 0.05;
+      camera.position.y += (-mouse.y - camera.position.y) * 0.05;
+
+      renderer.render(scene, camera);
+
+      elapsedTime += 1 / 60; // 経過時間を更新（60フレーム毎に1秒経過とみなす）
+
+      // 経過時間がmaxElapsedTimeを超えたら音楽プレイヤーをフェードイン表示する
+      if (elapsedTime >= maxElapsedTime) {
+        const musicPlayer = document.getElementById('musicPlayer');
+        musicPlayer.classList.add('show');
+      }
     }
 
     camera.position.z = 25;
@@ -93,38 +184,7 @@
     window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('resize', onWindowResize);
 
-    function animate() {
-      requestAnimationFrame(animate);
-
-      sphereGroup.children.forEach(sphere => {
-        // Apply acceleration to velocity
-        sphere.velocity.add(sphere.acceleration);
-
-        // Apply velocity to position
-        sphere.position.add(sphere.velocity);
-
-        // Dampen acceleration
-        sphere.acceleration.multiplyScalar(0.98);
-
-        // Check boundaries and reverse velocity if necessary
-        if (sphere.position.x > 20 || sphere.position.x < -20) {
-          sphere.velocity.x *= -1;
-        }
-        if (sphere.position.y > 20 || sphere.position.y < -20) {
-          sphere.velocity.y *= -1;
-        }
-        if (sphere.position.z > 20 || sphere.position.z < -20) {
-          sphere.velocity.z *= -1;
-        }
-      });
-
-      // Update camera position based on mouse movement
-      camera.position.x += (mouse.x - camera.position.x) * 0.05;
-      camera.position.y += (-mouse.y - camera.position.y) * 0.05;
-
-      renderer.render(scene, camera);
-    }
-
+    createSpheres();
     animate();
   </script>
 </body>
