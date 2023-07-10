@@ -195,7 +195,7 @@ camera.position.z = 25;
 const mouse = new THREE.Vector2();
 const target = new THREE.Vector2();
 const windowHalf = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
-const mouseMoveScale = 0.0002; // マウス移動のスケールダウンの値
+const mouseMoveScale = 0.001; // マウス移動のスケールダウンの値
 
 function onMouseMove(event) {
   mouse.x = (event.clientX - windowHalf.x) * mouseMoveScale;
