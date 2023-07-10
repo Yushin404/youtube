@@ -27,12 +27,14 @@
       z-index: 1;
       opacity: 0;
       transition: opacity 1s ease-in;
+      overflow: hidden; /* スクロールを無効にする */
     }
 
     .music-player.show {
       opacity: 1;
     }
 
+    /* スマートフォン向けのスタイル */
     @media only screen and (max-width: 600px) {
       .music-player {
         top: 80%; /* スマートフォンでの表示位置を調整 */
@@ -42,6 +44,11 @@
         height: 100%; /* 音楽プレイヤーの高さを100%に設定 */
         max-height: 400px; /* 音楽プレイヤーの最大高さを設定 */
       }
+    }
+
+    /* スクロールを無効にするための追加スタイル */
+    html, body {
+      overflow: hidden;
     }
   </style>
 </head>
@@ -53,6 +60,19 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
   <script>
+    // 音楽プレイヤーの背景を削除する関数
+    function removePlayerBackground() {
+      const musicPlayer = document.getElementById('musicPlayer');
+      if (musicPlayer) {
+        musicPlayer.style.backgroundColor = 'transparent';
+      }
+    }
+
+    // ページの読み込み完了時に背景を削除する
+    window.addEventListener('load', function() {
+      removePlayerBackground();
+    });
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -123,82 +143,78 @@
           // 最初の2秒後は球の動きを10倍遅くする
           if (distance < maxDistance) {
             const attractionDirection = sphere.position.clone().negate().normalize();
-            const attraction = attractionDirection.multiplyScalar(attractionForce / slowdownFactor);
-            sphere.acceleration.add(attraction);
-          } else {
-            const repulsionDirection = sphere.position.clone().normalize();
-            const repulsion = repulsionDirection.multiplyScalar(repulsionForce / slowdownFactor);
-            sphere.acceleration.add(repulsion);
-          }
-
-          sphere.velocity.add(sphere.acceleration);
-          sphere.velocity.multiplyScalar(1 / slowdownFactor);
-          sphere.position.add(sphere.velocity);
-          sphere.acceleration.multiplyScalar(0.99);
-        }
-
-        if (sphere.initialPosition.distanceTo(new THREE.Vector3(0, 0, 0)) > 50) {
-          sphere.position.copy(sphere.initialPosition);
-          sphere.velocity.set(0, 0, 0);
-        }
-
-        // 範囲外に出た球をランダムな位置に再配置
-        const boundary = 60;
-        if (Math.abs(sphere.position.x) > boundary || Math.abs(sphere.position.y) > boundary || Math.abs(sphere.position.z) > boundary) {
-          sphere.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
-          sphere.initialPosition.copy(sphere.position);
-          sphere.velocity.set(0, 0, 0);
-        }
-      });
-
-      camera.position.x += (mouse.x - camera.position.x) * 0.05;
-      camera.position.y += (-mouse.y - camera.position.y) * 0.05;
-
-      renderer.render(scene, camera);
-
-      elapsedTime += 1 / 60; // 経過時間を更新（60フレーム毎に1秒経過とみなす）
-
-      // 経過時間がmaxElapsedTimeを超えたら音楽プレイヤーをフェードイン表示する
-      if (elapsedTime >= maxElapsedTime) {
-        const musicPlayer = document.getElementById('musicPlayer');
-        musicPlayer.classList.add('show');
-      }
+            const attraction = attractionDirection.multiplyScalar(attractionForce/slowdownFactor);
+} else {
+const repulsionDirection = sphere.position.clone().normalize();
+const repulsion = repulsionDirection.multiplyScalar(repulsionForce / slowdownFactor);
+sphere.acceleration.add(repulsion);
+}
+      sphere.velocity.add(sphere.acceleration);
+      sphere.velocity.multiplyScalar(1 / slowdownFactor);
+      sphere.position.add(sphere.velocity);
+      sphere.acceleration.multiplyScalar(0.99);
     }
 
-    camera.position.z = 25;
-
-    const mouse = new THREE.Vector2();
-    const target = new THREE.Vector2();
-    const windowHalf = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
-    const mouseMoveScale = 0.0002; // マウス移動のスケールダウンの値
-
-    function onMouseMove(event) {
-      mouse.x = (event.clientX - windowHalf.x) * mouseMoveScale;
-      mouse.y = (event.clientY - windowHalf.y) * mouseMoveScale;
+    if (sphere.initialPosition.distanceTo(new THREE.Vector3(0, 0, 0)) > 50) {
+      sphere.position.copy(sphere.initialPosition);
+      sphere.velocity.set(0, 0, 0);
     }
 
-    function onTouchMove(event) {
-      event.preventDefault();
-      const touch = event.changedTouches[0];
-      mouse.x = (touch.clientX - windowHalf.x) * mouseMoveScale;
-      mouse.y = (touch.clientY - windowHalf.y) * mouseMoveScale;
+    // 範囲外に出た球をランダムな位置に再配置
+    const boundary = 60;
+    if (Math.abs(sphere.position.x) > boundary || Math.abs(sphere.position.y) > boundary || Math.abs(sphere.position.z) > boundary) {
+      sphere.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
+      sphere.initialPosition.copy(sphere.position);
+      sphere.velocity.set(0, 0, 0);
     }
+  });
 
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      windowHalf.set(window.innerWidth / 2, window.innerHeight / 2);
-    }
+  camera.position.x += (mouse.x - camera.position.x) * 0.05;
+  camera.position.y += (-mouse.y - camera.position.y) * 0.05;
 
-    window.addEventListener('mousemove', onMouseMove);
-   
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('resize', onWindowResize);
+  renderer.render(scene, camera);
 
-    createSpheres();
-    animate();
-  </script>
+  elapsedTime += 1 / 60; // 経過時間を更新（60フレーム毎に1秒経過とみなす）
+
+  // 経過時間がmaxElapsedTimeを超えたら音楽プレイヤーをフェードイン表示する
+  if (elapsedTime >= maxElapsedTime) {
+    const musicPlayer = document.getElementById('musicPlayer');
+    musicPlayer.classList.add('show');
+  }
+}
+
+camera.position.z = 25;
+
+const mouse = new THREE.Vector2();
+const target = new THREE.Vector2();
+const windowHalf = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
+const mouseMoveScale = 0.0002; // マウス移動のスケールダウンの値
+
+function onMouseMove(event) {
+  mouse.x = (event.clientX - windowHalf.x) * mouseMoveScale;
+  mouse.y = (event.clientY - windowHalf.y) * mouseMoveScale;
+}
+
+function onTouchMove(event) {
+  event.preventDefault();
+  const touch = event.changedTouches[0];
+  mouse.x = (touch.clientX - windowHalf.x) * mouseMoveScale;
+  mouse.y = (touch.clientY - windowHalf.y) * mouseMoveScale;
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  windowHalf.set(window.innerWidth / 2, window.innerHeight / 2);
+}
+
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('touchmove', onTouchMove, { passive: false });
+window.addEventListener('resize', onWindowResize);
+
+createSpheres();
+animate();
+ </script>
 </body>
 </html>
-
