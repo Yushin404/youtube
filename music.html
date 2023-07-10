@@ -34,20 +34,12 @@
       opacity: 1;
     }
 
-@media only screen and (max-width: 600px) {
-  .music-player {
-    top: 80%; /* スマートフォンでの表示位置を調整 */
-  }
-
-  .music-player iframe {
-    height: 350px; /* 音楽プレイヤーの高さを2倍に設定 */
-    max-height: 800px; /* 音楽プレイヤーの最大高さを設定 */
-    transform: scale(2); /* 音楽プレイヤーを2倍に拡大 */
-  }
-}
-
-
-
+    /* スマートフォン向けのスタイル */
+    @media only screen and (max-width: 600px) {
+      .music-player {
+        zoom: 150%; /* 要素全体の表示を拡大する */
+        top: 80%; /* スマートフォンでの表示位置を調整 */
+      }
 
       .music-player iframe {
         height: 100%; /* 音楽プレイヤーの高さを100%に設定 */
