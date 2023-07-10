@@ -34,8 +34,13 @@
     }
 
     @media only screen and (max-width: 600px) {
+      .music-player {
+        top: 80%; /* スマートフォンでの表示位置を調整 */
+      }
+
       .music-player iframe {
-        height: 100px;
+        height: 100%; /* 音楽プレイヤーの高さを100%に設定 */
+        max-height: 400px; /* 音楽プレイヤーの最大高さを設定 */
       }
     }
   </style>
@@ -43,7 +48,7 @@
 <body>
   <div id="container"></div>
   <div class="music-player" id="musicPlayer">
-    <iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="175" style="width:100%;max-width:660px;overflow:hidden;border-radius:10px;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/jp/album/demon-lord/1695906040?i=1695906382&l=en-US"></iframe>
+    <iframe id="embedPlayer" src="https://embed.music.apple.com/jp/album/%E3%83%87%E3%83%BC%E3%83%A2%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89/1695906040?i=1695906382&amp;app=music&amp;itsct=music_box_player&amp;itscg=30200&amp;ls=1&amp;theme=dark" frameborder="0" sandbox        allow="autoplay *; encrypted-media *; clipboard-write" style="width: 100%; max-width: 660px; overflow: hidden; border-radius: 10px; transform: translateZ(0px); animation: 2s ease 0s 6 normal none running loading-indicator; background-color: rgb(228, 228, 228);"></iframe>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
@@ -140,8 +145,7 @@
         // 範囲外に出た球をランダムな位置に再配置
         const boundary = 60;
         if (Math.abs(sphere.position.x) > boundary || Math.abs(sphere.position.y) > boundary || Math.abs(sphere.position.z) > boundary) {
-          sphere.position.set(Math.random()
- * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
+          sphere.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 40 - 20);
           sphere.initialPosition.copy(sphere.position);
           sphere.velocity.set(0, 0, 0);
         }
@@ -166,7 +170,7 @@
     const mouse = new THREE.Vector2();
     const target = new THREE.Vector2();
     const windowHalf = new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2);
-    const mouseMoveScale = 0.001; // マウス移動のスケールダウンの値
+    const mouseMoveScale = 0.0002; // マウス移動のスケールダウンの値
 
     function onMouseMove(event) {
       mouse.x = (event.clientX - windowHalf.x) * mouseMoveScale;
@@ -188,6 +192,7 @@
     }
 
     window.addEventListener('mousemove', onMouseMove);
+   
     window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('resize', onWindowResize);
 
@@ -196,3 +201,4 @@
   </script>
 </body>
 </html>
+
