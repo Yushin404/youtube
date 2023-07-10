@@ -34,11 +34,18 @@
       opacity: 1;
     }
 
-    /* スマートフォン向けのスタイル */
-    @media only screen and (max-width: 600px) {
-      .music-player {
-        top: 80%; /* スマートフォンでの表示位置を調整 */
-      }
+@media only screen and (max-width: 600px) {
+  .music-player {
+    top: 80%; /* スマートフォンでの表示位置を調整 */
+  }
+
+  .music-player iframe {
+    height: 350px; /* 音楽プレイヤーの高さを2倍に設定 */
+    max-height: 700px; /* 音楽プレイヤーの最大高さを設定 */
+  }
+}
+
+
 
       .music-player iframe {
         height: 100%; /* 音楽プレイヤーの高さを100%に設定 */
