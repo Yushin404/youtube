@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 Player</title>
+</head>
+<body>
+    <input type="file" id="fileInput" />
+    <button id="playPauseButton">再生</button>
+    <input type="range" id="volumeSlider" min="0" max="200" value="100" />
+    <p>音量: <span id="volumePercentage">100</span>%</p>
+    <audio id="audioElement" controls>
+        <source id="audioSource" type="audio/mpeg" />
+    </audio>
+
+    <script>
+        const audioElement = document.getElementById('audioElement');
+        const audioSource = document.getElementById('audioSource');
+        const fileInput = document.getElementById('fileInput');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumePercentage = document.getElementById('volumePercentage');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const objectURL = URL.createObjectURL(file);
+            audioSource.src = objectURL;
+            audioElement.load();
+        });
+
+        playPauseButton.addEventListener('click', function() {
+            if (audioElement.paused) {
+                audioElement.play();
+                playPauseButton.textContent = "一時停止";
+            } else {
+                audioElement.pause();
+                playPauseButton.textContent = "再生";
+            }
+        });
+
+        volumeSlider.addEventListener('input', function() {
+            const volumeValue = volumeSlider.value;
+            volumePercentage.textContent = volumeValue;
+            setVolume(volumeValue / 100);
+        });
+
+        function setVolume(volume) {
+            audioElement.volume = Math.min(volume * 2, 1);
+        }
+    </script>
+</body>
+</html>
