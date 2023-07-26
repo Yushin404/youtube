@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MP3 Player</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -46,12 +47,12 @@
         .volume-slider-container {
             display: flex;
             align-items: center;
-            width: 100%; /* スライダーの幅を親要素の幅に合わせる */
+            width: 100%;
             margin-top: 10px;
         }
 
         .volume-slider {
-            flex: 1; /* フレックスアイテムを伸縮させる */
+            flex: 1;
             margin-left: 10px;
         }
 
@@ -80,7 +81,7 @@
         const playPauseButton = document.getElementById('playPauseButton');
         const volumeSlider = document.getElementById('volumeSlider');
         const volumePercentage = document.getElementById('volumePercentage');
-        let isAlertShown = false; // ポップアップを表示したかどうかのフラグ
+        let isAlertShown = false;
 
         fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -107,11 +108,13 @@
 
         function setVolume(volume) {
             if (volume > 3 && !isAlertShown) {
-                // 音量が300%以上かつポップアップが表示されていない場合、警告メッセージを表示
                 alert("大きい音量に注意してください！");
                 isAlertShown = true;
             }
-            audioElement.volume = Math.min(volume, 5);
+
+            // ここで音量を0から5の範囲に制限して、それに100倍して音量を設定
+            const limitedVolume = Math.min(volume, 5);
+            audioElement.volume = limitedVolume * 100;
         }
     </script>
 </body>
