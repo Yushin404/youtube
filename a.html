@@ -66,7 +66,7 @@
         <input type="file" id="fileInput" />
         <button class="button" id="playPauseButton">再生</button>
         <div class="volume-slider-container">
-            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="500" value="100" />
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100" />
             <span class="volume-label">音量: <span id="volumePercentage">100</span>%</span>
         </div>
         <audio id="audioElement" controls>
@@ -111,10 +111,7 @@
                 alert("大きい音量に注意してください！");
                 isAlertShown = true;
             }
-
-            // ここで音量を0から5の範囲に制限して、それに100倍して音量を設定
-            const limitedVolume = Math.min(volume, 5);
-            audioElement.volume = limitedVolume * 100;
+            audioElement.volume = volume;
         }
     </script>
 </body>
