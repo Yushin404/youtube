@@ -8,7 +8,7 @@
 <body>
     <input type="file" id="fileInput" />
     <button id="playPauseButton">再生</button>
-    <input type="range" id="volumeSlider" min="0" max="200" value="100" />
+    <input type="range" id="volumeSlider" min="0" max="500" value="100" />
     <p>音量: <span id="volumePercentage">100</span>%</p>
     <audio id="audioElement" controls>
         <source id="audioSource" type="audio/mpeg" />
@@ -46,7 +46,7 @@
         });
 
         function setVolume(volume) {
-            audioElement.volume = Math.min(volume * 2, 1);
+            audioElement.volume = Math.min(volume, 5);
         }
     </script>
 </body>
