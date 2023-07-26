@@ -4,15 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MP3 Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            max-width: 400px;
+            width: 80%;
+        }
+
+        .button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .volume-slider-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .volume-slider {
+            margin-left: 10px;
+            width: 150px;
+        }
+
+        .volume-label {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
-    <input type="file" id="fileInput" />
-    <button id="playPauseButton">再生</button>
-    <input type="range" id="volumeSlider" min="0" max="500" value="100" />
-    <p>音量: <span id="volumePercentage">100</span>%</p>
-    <audio id="audioElement" controls>
-        <source id="audioSource" type="audio/mpeg" />
-    </audio>
+    <div class="player-container">
+        <input type="file" id="fileInput" />
+        <button class="button" id="playPauseButton">再生</button>
+        <div class="volume-slider-container">
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="500" value="100" />
+            <span class="volume-label">音量: <span id="volumePercentage">100</span>%</span>
+        </div>
+        <audio id="audioElement" controls>
+            <source id="audioSource" type="audio/mpeg" />
+        </audio>
+    </div>
 
     <script>
         const audioElement = document.getElementById('audioElement');
