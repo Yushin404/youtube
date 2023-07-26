@@ -46,11 +46,13 @@
         .volume-slider-container {
             display: flex;
             align-items: center;
+            width: 100%; /* スライダーの幅を親要素の幅に合わせる */
+            margin-top: 10px;
         }
 
         .volume-slider {
+            flex: 1; /* フレックスアイテムを伸縮させる */
             margin-left: 10px;
-            width: 150px;
         }
 
         .volume-label {
@@ -78,6 +80,7 @@
         const playPauseButton = document.getElementById('playPauseButton');
         const volumeSlider = document.getElementById('volumeSlider');
         const volumePercentage = document.getElementById('volumePercentage');
+        let isAlertShown = false; // ポップアップを表示したかどうかのフラグ
 
         fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -103,6 +106,11 @@
         });
 
         function setVolume(volume) {
+            if (volume > 3 && !isAlertShown) {
+                // 音量が300%以上かつポップアップが表示されていない場合、警告メッセージを表示
+                alert("大きい音量に注意してください！");
+                isAlertShown = true;
+            }
             audioElement.volume = Math.min(volume, 5);
         }
     </script>
