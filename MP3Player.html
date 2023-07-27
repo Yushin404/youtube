@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 Player</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+        }
+
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            max-width: 400px;
+            width: 80%;
+            margin: 10px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .volume-slider-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .volume-slider {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .volume-label {
+            margin-left: 10px;
+        }
+
+        .player-scroll-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Style for the "+" button */
+        #addPlayerButton {
+            box-sizing: content-box;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            font-size: 30px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #addPlayerButton:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="player-scroll-container">
+        <!-- 初めのプレーヤーを生成 -->
+        <div class="player-container">
+            <input type="file" class="fileInput" />
+            <button class="button playPauseButton">再生</button>
+            <div class="volume-slider-container">
+                <input type="range" class="volume-slider" min="0" max="100" value="100" />
+                <span class="volume-label">音量: <span class="volumePercentage">100</span>%</span>
+            </div>
+            <audio class="audioElement" controls>
+                <source class="audioSource" type="audio/mpeg" />
+            </audio>
+        </div>
+    </div>
+    <button class="button" id="addPlayerButton">＋</button>
+
+    <script>
+        let playerCount = 1;
+
+        function createPlayer(playerId) {
+            const playerContainer = document.createElement("div");
+            playerContainer.classList.add("player-container");
+
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.classList.add("fileInput");
+
+            const playPauseButton = document.createElement("button");
+            playPauseButton.classList.add("button", "playPauseButton");
+            playPauseButton.textContent = "再生";
+
+            const volumeSliderContainer = document.createElement("div");
+            volumeSliderContainer.classList.add("volume-slider-container");
+
+            const volumeSlider = document.createElement("input");
+            volumeSlider.type = "range";
+            volumeSlider.classList.add("volume-slider");
+            volumeSlider.min = 0;
+            volumeSlider.max = 100;
+            volumeSlider.value = 100;
+
+            const volumeLabel = document.createElement("span");
+            volumeLabel.classList.add("volume-label");
+            volumeLabel.innerHTML = `音量: <span class="volumePercentage" id="volumePercentage${playerId}">100</span>%`;
+
+            const audioElement = document.createElement("audio");
+            audioElement.controls = true;
+            audioElement.classList.add("audioElement");
+
+            const audioSource = document.createElement("source");
+            audioSource.type = "audio/mpeg";
+            audioSource.classList.add("audioSource");
+
+            playerContainer.appendChild(fileInput);
+            playerContainer.appendChild(playPauseButton);
+            volumeSliderContainer.appendChild(volumeSlider);
+            volumeSliderContainer.appendChild(volumeLabel);
+            playerContainer.appendChild(volumeSliderContainer);
+            audioElement.appendChild(audioSource);
+            playerContainer.appendChild(audioElement);
+
+            document.querySelector(".player-scroll-container").appendChild(playerContainer);
+
+            const fileInputCurrent = document.querySelector(`.fileInput:nth-of-type(${playerId})`);
+            const audioSourceCurrent = document.querySelector(`.audioSource:nth-of-type(${playerId})`);
+            const playPauseButtonCurrent = document.querySelector(`.playPauseButton:nth-of-type(${playerId})`);
+            const volumeSliderCurrent = document.querySelector(`.volume-slider:nth-of-type(${playerId})`);
+            const volumePercentageCurrent = document.querySelector(`.volumePercentage:nth-of-type(${playerId})`);
+            let isAlertShownCurrent = false;
+            let audioContextCurrent;
+            let audioSourceNodeCurrent;
+            let gainNodeCurrent;
+
+            fileInputCurrent.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                const objectURL = URL.createObjectURL(file);
+                audioSourceCurrent.src = objectURL;
+                audioElement.load();
+            });
+
+            playPauseButtonCurrent.addEventListener('click', function() {
+                if (audioElement.paused) {
+                    audioElement.play();
+                    playPauseButtonCurrent.textContent = "一時停止";
+                } else {
+                    audioElement.pause();
+                    playPauseButtonCurrent.textContent = "再生";
+                }
+            });
+
+            volumeSliderCurrent.addEventListener('input', function() {
+                const volumeValue = volumeSliderCurrent.value;
+                volumePercentageCurrent.textContent = volumeValue;
+                setVolume(volumeValue / 100);
+            });
+
+            function setVolume(volume) {
+                if (volume > 1 && !isAlertShownCurrent) {
+                    alert("大きい音量に注意してください！");
+                    isAlertShownCurrent = true;
+                }
+                audioElement.volume = Math.min(volume, 1);
+            }
+
+            async function initializeAudio() {
+                audioContextCurrent = new (window.AudioContext || window.webkitAudioContext)();
+                const response = await fetch(audioSourceCurrent.src);
+                const audioData = await response.arrayBuffer();
+                const decodedAudioData = await audioContextCurrent.decodeAudioData(audioData);
+                audioSourceNodeCurrent = audioContextCurrent.createBufferSource();
+                audioSourceNodeCurrent.buffer = decodedAudioData;
+
+                gainNodeCurrent = audioContextCurrent.createGain();
+                audioSourceNodeCurrent.connect(gainNodeCurrent);
+                gainNodeCurrent.connect(audioContextCurrent.destination);
+                audioSourceNodeCurrent.start(0);
+            }
+
+            initializeAudio();
+        }
+
+        const addPlayerButton = document.getElementById("addPlayerButton");
+        addPlayerButton.addEventListener("click", function () {
+            playerCount++;
+            createPlayer(playerCount);
+        });
+
+        // 初めのプレーヤーを生成
+        createPlayer(playerCount);
+    </script>
+</body>
+</html>
